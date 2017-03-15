@@ -32,17 +32,18 @@ clustering.nearness = function (obj){
 	var clusterBounds = clustering.differentiateGroups(obj);
 
 	//find bound and weight
-	var bound = 0;
+	/*var bound = 0;
 	var weight = 0;
+	console.log(clusterBounds);
 	for(var i in clusterBounds){
-		console.log(i,"::","bound",i," :: ","weight", clusterBounds[i]);
 		//we start with 0 for weight and bound since we assume two items that produce a 0 zero difference is a cluster?
 		if(clusterBounds[i] > weight && Number(i) > bound){
 			bound = Number(i);
 			weight = clusterBounds[i];
 			console.log("winner",i,"::","bound",bound," :: ","weight", weight);
 		}
-	}
+	}*/
+
 
 
 
@@ -83,13 +84,14 @@ clustering.nearness = function (obj){
 
 		//get the difference between the values
 		var round1 = String(Math.round(value1)).length;
-		console.log(round1);
 		var round2 = String(Math.round(value2)).length;
-		console.log(round2);
-		var diff = Math.abs(Math.abs( roundByPlace(value1, round1*3) ) - Math.abs(roundByPlace( value2, round2*3 ) ));
-		console.log("diff", diff, "bound", bound);
+		//console.log(round2);
+		var diff = Math.abs(Math.abs( roundByPlace(value1, round1*10) ) - Math.abs(roundByPlace( value2, round2*10 ) ));
+
 		//if the difference is less than the agreeable bound, create a cluster. otherwise the value is outside the definition of a cluster
-		if(diff <= bound){
+		if(diff == 0/*bound*/){
+
+			//identify cluster
 			if(activeCluster == false){
 				currentCluster = {};
 				out.push(currentCluster);
@@ -101,13 +103,16 @@ clustering.nearness = function (obj){
 			for(var n in vals){
 				var value = vals[n];
 				delete nameList[value];
-				currentCluster[value] = diff;
+				currentCluster[value] = obj[value];//diff;
 			}
 
 		}else{
 			//since we're a sorted list, we can be confident that we've got all the clusters so far. if a value no longer is part of an existing cluster it's time to move on and make a new cluster.
 			activeCluster = false;
 		}
+	}
+	for(var i in nameList){
+		nameList[i] = obj[i];
 	}
 	//since we found all the clusters, outliers are anything left in the nameList array. easy.
 	return {"clusters":out, "outliers": nameList};
